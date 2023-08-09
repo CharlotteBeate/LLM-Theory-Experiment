@@ -13,7 +13,7 @@ from icecream import ic
 # Define which experiments are run
 __three__ = False
 __four__ = False
-__five__ = False
+__five__ = True
 __six__ = True
 
 #################################################################################
@@ -115,9 +115,9 @@ def resembling(vector):
     
     # Check whether entry 4 (index 3) or entry 3 (index 2) is bigger
     if vector[3] > vector[2]:
-        vector = modify_vector(vector, 0, 1)
-    elif vector[2] > vector[3]:
         vector = modify_vector(vector, 1, 0)
+    elif vector[2] > vector[3]:
+        vector = modify_vector(vector, 0, 1)
     
     return vector
 
@@ -133,6 +133,35 @@ def diverging(vector):
     elif vector[2] < vector[3]:
         vector = modify_vector(vector, 1, 0)
     
+    return vector
+
+
+def make_unique(vector):
+    # Check if the vector has exactly 4 entries
+    if len(vector) != 4:
+        raise ValueError("Input vector should have exactly 4 entries.")
+    
+    # Check whether entry 4 (index 3) or entry 3 (index 2) is bigger
+    if vector[2]/vector[3] < vector[0]/vector[1]:
+        vector = modify_vector(vector, 1, 0)
+        ic("the first entry is the more unique one")
+    elif vector[2]/vector[3] < vector[0]/vector[1]:
+        vector = modify_vector(vector, 0, 1)
+    return vector
+
+
+
+def new1(vector):
+    # Check if the vector has exactly 4 entries
+    if len(vector) != 4:
+        raise ValueError("Input vector should have exactly 4 entries.")
+    if vector[0] + vector[1] < 0.5:
+    # Check whether entry 4 (index 3) or entry 3 (index 2) is bigger
+        if vector[2]/vector[3] < vector[0]/vector[1]:
+            vector = modify_vector(vector, 0, 1)
+            ic("the first entry is the more unique one")
+        elif vector[2]/vector[3] < vector[0]/vector[1]:
+            vector = modify_vector(vector, 1, 0)
     return vector
 
 def same_proportion(vector):
@@ -298,7 +327,8 @@ if __three__:
     for i in range(N):
         start_p = gen_prob(x)
         if np.sum(start_p) == 1: 
-            mod_prob = modify_vector(start_p, 0,1)
+            mod_prob = modify_vector(start_p, 0,1) #24 % - Id otn udnerstand hwy thre is this difference
+            # mod_prob = make_unique(start_p) # 13%
             group, group_m_rem, group_m_forget = calculate_probabilities(start_p, mod_prob, paths, T)
             if group[0] <= group_m_rem[0]:
                 abc += 1
@@ -345,7 +375,7 @@ if __four__:
 abc = 0
 fail = 0
 T = 0.2
-N = 600
+N = 200
 numbers = np.zeros(N)
 if __five__:
     print("experiment 5" )
@@ -354,7 +384,7 @@ if __five__:
         if np.sum(start_p) == 1: 
             # mod_prob = equalize_entries(start_p, 0,1) # 24%
             # mod_prob = diverging(start_p)  # 70-85%
-            mod_prob = maj_min(start_p)  # 70-85%
+            mod_prob = make_unique(start_p)  # 70-85%
             # mod_prob = resembling(start_p)  # 25%
             # mod_prob = same_proportion(start_p) # 0% 
 
@@ -367,8 +397,8 @@ if __five__:
                 ic(start_p)
                 ic(mod_prob)
                 ic(group)
-                ic(group_m_rem)
-            numbers[i] = group_m_rem[0] - group[0]
+                ic(group_m_forget)
+            numbers[i] = group_m_forget[0] - group[0]
     print(abc, fail)
     mean = np.mean(numbers)
     ic(mean) # 0.2876046634943488  for T = 0.2
@@ -376,8 +406,8 @@ if __five__:
 
 abc = 0
 fail = 0
-T = 2.5
-N = 100
+T = 1
+N = 200
 numbers = np.zeros(N)
 if __six__:
     print("experiment 6")
@@ -385,7 +415,7 @@ if __six__:
         start_p = gen_prob(x)
         if np.sum(start_p) == 1: 
             # mod_prob = equalize_entries(start_p, 0,1) # 24%
-            mod_prob = maj_min(start_p)  # 70-85%
+            mod_prob = make_unique(start_p)  # 70-85%
             # mod_prob = diverging(start_p)  # 75%
             # mod_prob = resembling(start_p)  # 25%
             # mod_prob = same_proportion(start_p) # 1%  - 99% 
@@ -399,7 +429,7 @@ if __six__:
                 ic(mod_prob)
                 ic(group)
                 ic(group_m_rem)
-            numbers[i] = group_m_rem[0] - group[0]
+            numbers[i] = group_m_forget[0] - group[0]
     print(abc, fail)
     mean = np.mean(numbers)
     ic(numbers)
